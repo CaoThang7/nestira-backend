@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: nestjs-api-service
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /apis/svc/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DOMAIN_LOCAL
+        value: http://localhost:3000
+      - key: DOMAIN_NESTIRA
+        value: https://nestjs-api-service.onrender.com
+      - key: DB_TYPE
+        sync: false 
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: SECURE_API_ACCESS_KEY
+        sync: false
+    domains:
+      - nestjs-api-service.onrender.com
+    autoDeploy: true
+
+previewsEnabled: true
+previewsExpireAfterDays: 2
