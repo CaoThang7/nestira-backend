@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
 import { Product } from './product/product.entity';
 import { Category } from './category/category.entity';
 import { ProductModule } from './product/product.module';
@@ -25,5 +27,7 @@ import { ProductImage } from './product/product-image.entity';
     ProductModule,
     CategoryModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
