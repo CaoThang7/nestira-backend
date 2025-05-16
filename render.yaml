@@ -9,12 +9,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 5000
       - key: DOMAIN_LOCAL
-        value: http://localhost:3000
+        sync: false 
       - key: DOMAIN_NESTIRA
-        value: https://nestjs-api-service.onrender.com
+        sync: false 
       - key: DB_TYPE
         sync: false 
       - key: DB_HOST
@@ -29,8 +27,6 @@ services:
         sync: false
       - key: SECURE_API_ACCESS_KEY
         sync: false
-    domains:
-      - nestjs-api-service.onrender.com
     autoDeploy: true
 
 previewsEnabled: true
