@@ -10,7 +10,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Locale } from 'src/common/decorators/locale.decorator';
+import { Locale } from '../common/decorators/locale.decorator';
 
 @Controller('products')
 export class ProductController {

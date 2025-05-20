@@ -1,5 +1,6 @@
 import helmet from 'helmet';
 import * as dotenv from 'dotenv';
+import * as cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { ApiKeyGuard } from './common/guards/api-key.guard';
 import { NestFactory } from '@nestjs/core';
@@ -13,6 +14,8 @@ async function bootstrap() {
   const allowedOrigins = [
     process.env.DOMAIN_LOCAL,
     process.env.DOMAIN_NESTIRA,
+    process.env.DOMAIN_CMS_NESTIRA,
+    process.env.DOMAIN_LOCAL_DEV,
   ].filter(Boolean);
 
   app.enableCors({
@@ -27,6 +30,7 @@ async function bootstrap() {
   });
 
   app.use(helmet());
+  app.use(cookieParser());
 
   app.use(
     rateLimit({
