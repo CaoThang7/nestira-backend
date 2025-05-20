@@ -37,12 +37,12 @@ export class AuthController {
       loginDto.password,
     );
     const { access_token, user: userInfo } = await this.authService.login(user);
-    const node_env: any = process.env.NODE_ENV;
+    const isProduction: any = process.env.NODE_ENV === 'production';
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: node_env,
-      sameSite: 'lax',
+      secure: isProduction, 
+      sameSite: isProduction ? 'none' : 'lax', 
       maxAge: 3600 * 1000,
     });
 
