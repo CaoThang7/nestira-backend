@@ -11,18 +11,21 @@ export class UserService {
     return this.repo.findOne({ where: { username } });
   }
 
-  async createDemoAdminIfNotExists() {
+  async createDemoAdminIfNotExists(): Promise<string> {
     const bcrypt = require('bcrypt');
     const adminPassword: any = process.env.DEFAULT_ADMIN_PASSWORD;
     const demoPassword: any = process.env.DEFAULT_DEMO_PASSWORD;
 
-    const checkAdmin = await this.repo.findOne({ where: { username: 'admin' } });
+    const checkAdmin = await this.repo.findOne({
+      where: { username: 'admin' },
+    });
     if (!checkAdmin) {
       await this.repo.save({
         username: 'admin',
         password: await bcrypt.hash(adminPassword, 10),
         role: 'admin',
       });
+      return 'Admin account created';
     }
 
     const checkDemo = await this.repo.findOne({ where: { username: 'demo' } });
@@ -32,6 +35,9 @@ export class UserService {
         password: await bcrypt.hash(demoPassword, 10),
         role: 'demo',
       });
+      return 'Demo account created';
     }
+
+    return 'Admin account already exists';
   }
 }
