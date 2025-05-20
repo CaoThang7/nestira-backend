@@ -10,7 +10,7 @@ import {
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Locale } from 'src/common/decorators/locale.decorator';
+import { Locale } from '../common/decorators/locale.decorator';
 
 @Controller('categories')
 export class CategoryController {
