@@ -30,6 +30,9 @@ export class Product {
   @Column('decimal')
   price: number;
 
+  @Column('decimal', { nullable: true })
+  totalPrice?: number;
+
   @Column({ nullable: true })
   brand?: string;
 
