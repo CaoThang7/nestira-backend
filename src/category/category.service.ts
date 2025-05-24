@@ -38,6 +38,8 @@ export class CategoryService {
       id: cat.id,
       name: cat.name?.[locale] || '',
       description: cat.description?.[locale] || '',
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
     }));
 
     return { message: 'Categories fetched successfully', data };
