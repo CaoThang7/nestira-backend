@@ -33,6 +33,12 @@ export class CategoryController {
     return this.categoryService.findAll(locale);
   }
 
+  @Get('list-delete')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  findDeleted(@Locale() locale: string) {
+    return this.categoryService.findDeleted(locale);
+  }
+
   @Get('detail/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   findOne(@Param('id') id: string, @Locale() locale: string) {

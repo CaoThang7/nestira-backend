@@ -45,6 +45,22 @@ export class CategoryService {
     return { message: 'Categories fetched successfully', data };
   }
 
+  async findDeleted(locale: string = 'en') {
+    const categories = await this.categoryRepository.find({
+      where: { isActive: false },
+    });
+  
+    const data = categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name?.[locale] || '',
+      description: cat.description?.[locale] || '',
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
+    }));
+  
+    return { message: 'Deleted categories fetched successfully', data };
+  }
+
   async findOne(id: number, locale: string = 'en') {
     const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {

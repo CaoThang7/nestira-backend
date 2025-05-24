@@ -77,6 +77,20 @@ export class ProductService {
     };
   }
 
+  async findDeleted(locale: string = 'en') {
+    const products = await this.productRepository.find({
+      where: { isActive: false },
+      relations: ['category', 'images'],
+    });
+
+    return {
+      message: 'Deleted product fetched successfully',
+      data: products.map((product) =>
+        this.filterProductByLocale(product, locale),
+      ),
+    };
+  }
+
   async findOne(id: number, locale: string = 'en') {
     const product = await this.productRepository.findOne({
       where: { id },

@@ -34,6 +34,12 @@ export class ProductController {
     return this.productService.findAll(locale);
   }
 
+  @Get('list-delete')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  findDeleted(@Locale() locale: string) {
+    return this.productService.findDeleted(locale);
+  }
+
   @Get('detail/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   findOne(@Param('id') id: string, @Locale() locale: string) {
