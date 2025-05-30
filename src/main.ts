@@ -19,7 +19,10 @@ async function bootstrap() {
   ].filter(Boolean);
 
   app.enableCors({
-    origin: (origin: any, callback: any) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -35,12 +38,12 @@ async function bootstrap() {
   app.use(
     rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 100,
+      max: 200,
     }),
   );
 
   app.setGlobalPrefix('apis/svc');
-  
+
   app.useGlobalGuards(new ApiKeyGuard());
 
   const port = parseInt(process.env.PORT || '5000');
