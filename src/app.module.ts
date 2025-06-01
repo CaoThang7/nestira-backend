@@ -8,7 +8,6 @@ import { Category } from './category/category.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
-import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
@@ -32,7 +31,6 @@ import { User } from './user/user.entity';
     CategoryModule,
     UserModule,
     AuthModule,
-    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
