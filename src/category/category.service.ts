@@ -21,7 +21,7 @@ export class CategoryService {
     try {
       await this.categoryRepository.save(category);
       return { message: 'Category created successfully' };
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === '23505') {
         throw new ConflictException('Category name already exists');
       }
@@ -36,8 +36,8 @@ export class CategoryService {
 
     const data = categories.map((cat) => ({
       id: cat.id,
-      name: cat.name?.[locale] || '',
-      description: cat.description?.[locale] || '',
+      name: (cat.name?.[locale] as string) ?? '',
+      description: (cat.description?.[locale] as string) ?? '',
       createdAt: cat.createdAt,
       updatedAt: cat.updatedAt,
     }));
@@ -49,15 +49,15 @@ export class CategoryService {
     const categories = await this.categoryRepository.find({
       where: { isActive: false },
     });
-  
+
     const data = categories.map((cat) => ({
       id: cat.id,
-      name: cat.name?.[locale] || '',
-      description: cat.description?.[locale] || '',
+      name: (cat.name?.[locale] as string) ?? '',
+      description: (cat.description?.[locale] as string) ?? '',
       createdAt: cat.createdAt,
       updatedAt: cat.updatedAt,
     }));
-  
+
     return { message: 'Deleted categories fetched successfully', data };
   }
 
@@ -71,8 +71,8 @@ export class CategoryService {
       message: 'Category fetched successfully',
       data: {
         id: category.id,
-        name: category.name?.[locale] || '',
-        description: category.description?.[locale] || '',
+        name: (category.name?.[locale] as string) ?? '',
+        description: (category.description?.[locale] as string) ?? '',
       },
     };
   }

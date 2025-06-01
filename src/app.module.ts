@@ -18,7 +18,7 @@ import { User } from './user/user.entity';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
+      type: process.env.DB_TYPE as 'postgres' | 'mysql' | 'mariadb' | 'sqlite',
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
