@@ -8,6 +8,7 @@ import { Category } from './category/category.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
+import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
@@ -18,7 +19,7 @@ import { User } from './user/user.entity';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
+      type: process.env.DB_TYPE as 'postgres' | 'mysql' | 'mariadb' | 'sqlite',
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
@@ -31,6 +32,7 @@ import { User } from './user/user.entity';
     CategoryModule,
     UserModule,
     AuthModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

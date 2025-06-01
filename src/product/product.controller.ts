@@ -16,7 +16,6 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { Locale } from '../common/decorators/locale.decorator';
 
-
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}

@@ -43,24 +43,20 @@ export class ProductService {
 
     const product = this.productRepository.create({ ...dto, category });
 
-    try {
-      const savedProduct = await this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product);
 
-      if (dto.imageUrls?.length) {
-        const images = dto.imageUrls.map((url) =>
-          this.imageRepository.create({ url, product: savedProduct }),
-        );
-        await this.imageRepository.save(images);
-        savedProduct.images = images;
-      }
-
-      return {
-        message: 'Product created successfully',
-        data: savedProduct,
-      };
-    } catch (error) {
-      throw error;
+    if (dto.imageUrls?.length) {
+      const images = dto.imageUrls.map((url) =>
+        this.imageRepository.create({ url, product: savedProduct }),
+      );
+      await this.imageRepository.save(images);
+      savedProduct.images = images;
     }
+
+    return {
+      message: 'Product created successfully',
+      data: savedProduct,
+    };
   }
 
   async findAll(locale: string = 'en') {
@@ -179,15 +175,15 @@ export class ProductService {
   private filterProductByLocale(product: Product, locale: string) {
     return {
       ...product,
-      name: product.name?.[locale] || null,
-      origin: product.origin?.[locale] || null,
-      material: product.material?.[locale] || null,
-      description: product.description?.[locale] || null,
-      specifications: product.specifications?.[locale] || null,
+      name: (product.name?.[locale] as string) ?? null,
+      origin: (product.origin?.[locale] as string) ?? null,
+      material: (product.material?.[locale] as string) ?? null,
+      description: (product.description?.[locale] as string) ?? null,
+      specifications: (product.specifications?.[locale] as string) ?? null,
       category: {
         ...product.category,
-        name: product.category.name?.[locale] || null,
-        description: product.category.description?.[locale] || null,
+        name: (product.category.name?.[locale] as string) ?? null,
+        description: (product.category.description?.[locale] as string) ?? null,
       },
     };
   }
