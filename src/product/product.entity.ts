@@ -66,6 +66,9 @@ export class Product {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: 0 })
+  viewCount: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

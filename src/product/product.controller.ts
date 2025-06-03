@@ -6,8 +6,10 @@ import {
   Body,
   Patch,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
+import { Product } from './product.entity';
 import { ProductService } from './product.service';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -37,6 +39,16 @@ export class ProductController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   findDeleted(@Locale() locale: string) {
     return this.productService.findDeleted(locale);
+  }
+
+  @Get('list-sort')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getProducts(
+    @Query('sort') sort: 'price_asc' | 'price_desc' | 'views_desc',
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+  ): Promise<Product[]> {
+    return this.productService.getFilteredProducts({ sort, page, limit });
   }
 
   @Get('detail/:id')

@@ -97,9 +97,18 @@ export class ProductService {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
+    await this.productRepository.update(product.id, {
+      viewCount: () => '"viewCount" + 1',
+    });
+
+    const updatedProduct = await this.productRepository.findOne({
+      where: { id },
+      relations: ['category', 'images'],
+    });
+
     return {
       message: 'Product fetched successfully',
-      data: this.filterProductByLocale(product, locale),
+      data: this.filterProductByLocale(updatedProduct as Product, locale),
     };
   }
 
@@ -170,6 +179,41 @@ export class ProductService {
       throw new NotFoundException(`Product with ID ${id} not found.`);
     }
     return { message: 'Product permanently deleted successfully' };
+  }
+
+  async getFilteredProducts({
+    sort = 'price_asc',
+    page = 1,
+    limit = 20,
+  }: {
+    sort: string;
+    page: number;
+    limit: number;
+  }) {
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'image')
+      .leftJoinAndSelect('product.category', 'category')
+      .where('product.isActive = :isActive', { isActive: true });
+
+    switch (sort) {
+      case 'price_asc':
+        query.orderBy('product.totalPrice', 'ASC');
+        break;
+      case 'price_desc':
+        query.orderBy('product.totalPrice', 'DESC');
+        break;
+      case 'views_desc':
+        query.orderBy('product.viewCount', 'DESC');
+        break;
+      default:
+        query.orderBy('product.createdAt', 'DESC');
+        break;
+    }
+
+    query.skip((page - 1) * limit).take(limit);
+
+    return await query.getMany();
   }
 
   private filterProductByLocale(product: Product, locale: string) {
