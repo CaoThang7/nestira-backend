@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
+import { User } from './user/user.entity';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { Product } from './product/product.entity';
+import { SearchModule } from './search/search.module';
 import { Category } from './category/category.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { User } from './user/user.entity';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { User } from './user/user.entity';
     CategoryModule,
     UserModule,
     AuthModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
