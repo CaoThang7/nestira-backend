@@ -16,6 +16,7 @@ import { Category } from './category/category.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
+import { StatisticalModule } from './statistical/statistical.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ProductImage } from './product/product-image.entity';
     SearchModule,
     OrderModule,
     EmailModule,
+    StatisticalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
