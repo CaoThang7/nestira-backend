@@ -8,11 +8,15 @@ import {
   Query,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OrderStatus } from './order.entity';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CancelOrderDto } from './dto/delete-order.dto';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('orders')
 export class OrderController {
@@ -24,6 +28,7 @@ export class OrderController {
   }
 
   @Get('all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllOrders(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 20,
@@ -32,6 +37,7 @@ export class OrderController {
   }
 
   @Get('status/:status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getOrdersByStatus(@Param('status') status: OrderStatus) {
     return await this.orderService.getOrdersByStatus(status);
   }
@@ -42,6 +48,8 @@ export class OrderController {
   }
 
   @Patch('status/:orderCode')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async updateOrderStatus(
     @Param('orderCode') orderCode: string,
     @Body('status') status: OrderStatus,
@@ -56,6 +64,8 @@ export class OrderController {
 
   // Delete order by ID
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async deleteOrder(@Param('id') id: number) {
     await this.orderService.deleteOrder(id);
     return {
@@ -66,6 +76,8 @@ export class OrderController {
 
   // Delete order by order code
   @Delete('code/:orderCode')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async deleteOrderByCode(@Param('orderCode') orderCode: string) {
     await this.orderService.deleteOrderByCode(orderCode);
     return {
@@ -76,6 +88,8 @@ export class OrderController {
 
   // Cancel order (soft delete)
   @Put('cancel')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async cancelOrder(@Body() cancelOrderDto: CancelOrderDto) {
     const order = await this.orderService.cancelOrder(cancelOrderDto.orderCode);
     return {
