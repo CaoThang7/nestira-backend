@@ -5,15 +5,12 @@ import {
   Param,
   ParseIntPipe,
   DefaultValuePipe,
-  UseGuards,
 } from '@nestjs/common';
 import {
   SearchService,
   SearchSuggestionResponse,
   ProductSearchResponse,
 } from './search.service';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
 @Controller('search')
 export class SearchController {
@@ -21,7 +18,6 @@ export class SearchController {
 
   // API for getting category suggestions when user clicks on search input
   @Get('suggestions')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getCategorySuggestions(
     @Query('q') query?: string,
   ): Promise<SearchSuggestionResponse> {
@@ -30,7 +26,6 @@ export class SearchController {
 
   // API for searching products by keyword
   @Get('products')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async searchProducts(
     @Query('q') query: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -41,7 +36,6 @@ export class SearchController {
 
   // API for getting products by category
   @Get('category/:id/products')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getProductsByCategory(
     @Param('id', ParseIntPipe) categoryId: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -52,7 +46,6 @@ export class SearchController {
 
   // API for advanced search with multiple filters
   @Get('advanced')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async advancedSearch(
     @Query('q') query?: string,
     @Query('categoryId', new DefaultValuePipe(null)) categoryId?: number,
