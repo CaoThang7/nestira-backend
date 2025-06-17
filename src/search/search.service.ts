@@ -93,11 +93,19 @@ export class SearchService {
       });
 
     // Search by name (vi, en) or productCode
-    if (query && query.trim()) {
+    const trimmedQuery = query?.trim();
+    if (trimmedQuery && trimmedQuery.length > 0) {
       queryBuilder.andWhere(
         "(product.name->>'vi' ILIKE :query OR product.name->>'en' ILIKE :query OR product.productCode ILIKE :query)",
-        { query: `%${query.trim()}%` },
+        { query: `%${trimmedQuery}%` },
       );
+    } else {
+      return {
+        products: [],
+        total: 0,
+        page,
+        limit,
+      };
     }
 
     // Pagination
