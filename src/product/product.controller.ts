@@ -30,7 +30,6 @@ export class ProductController {
   }
 
   @Get('list')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   findAll(@Locale() locale: string) {
     return this.productService.findAll(locale);
   }
@@ -42,7 +41,6 @@ export class ProductController {
   }
 
   @Get('list-sort')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getProducts(
     @Query('sort') sort: 'price_asc' | 'price_desc' | 'views_desc',
     @Query('page') page = 1,
@@ -51,8 +49,17 @@ export class ProductController {
     return this.productService.getFilteredProducts({ sort, page, limit });
   }
 
+  @Get('kitchen-products')
+  async getKitchenProducts(@Locale() locale: string): Promise<any[]> {
+    return this.productService.getKitchenProducts(locale as 'vi' | 'en');
+  }
+
+  @Get('tech-products')
+  async getTechProducts(@Locale() locale: string): Promise<any[]> {
+    return this.productService.getTechProducts(locale as 'vi' | 'en');
+  }
+
   @Get('detail/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   findOne(@Param('id') id: string, @Locale() locale: string) {
     return this.productService.findOne(+id, locale);
   }

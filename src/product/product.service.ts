@@ -1,5 +1,5 @@
-import { Repository } from 'typeorm';
 import { Product } from './product.entity';
+import { Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductImage } from './product-image.entity';
 import { Category } from '../category/category.entity';
@@ -214,6 +214,146 @@ export class ProductService {
     query.skip((page - 1) * limit).take(limit);
 
     return await query.getMany();
+  }
+
+  //Function get Kitchen Products
+  async getKitchenProducts(locale: 'vi' | 'en' = 'vi'): Promise<any[]> {
+    const kitchenKeywords = {
+      en: [
+        'induction cooker',
+        'range hood',
+        'dishwasher',
+        'griller',
+        'refrigerator',
+        'coffee machine',
+        'kitchen faucet',
+        'kitchen sink',
+      ],
+      vi: [
+        'bếp từ',
+        'máy hút mùi',
+        'máy rửa bát',
+        'lò nướng',
+        'tủ lạnh',
+        'máy pha cà phê',
+        'vòi bếp',
+        'chậu rửa bếp',
+      ],
+    };
+
+    const keywords = kitchenKeywords[locale];
+
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'image')
+      .leftJoinAndSelect('product.category', 'category')
+      .where('product.isActive = :isActive', { isActive: true });
+
+    // Search for category name or product name
+    if (keywords.length > 0) {
+      query.andWhere(
+        new Brackets((qb) => {
+          keywords.forEach((keyword, index) => {
+            const categoryParamKey = `categoryKeyword${index}`;
+            const productParamKey = `productKeyword${index}`;
+
+            if (index === 0) {
+              qb.where(
+                `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+                {
+                  locale,
+                  [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+                  [productParamKey]: `%${keyword.toLowerCase()}%`,
+                },
+              );
+            } else {
+              qb.orWhere(
+                `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+                {
+                  locale,
+                  [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+                  [productParamKey]: `%${keyword.toLowerCase()}%`,
+                },
+              );
+            }
+          });
+        }),
+      );
+    }
+
+    query.orderBy('product.createdAt', 'DESC').take(4);
+    const rawProducts = await query.getMany();
+
+    return rawProducts.map((product) =>
+      this.filterProductByLocale(product, locale),
+    );
+  }
+
+  //Function get Tech Products
+  async getTechProducts(locale: 'vi' | 'en' = 'vi'): Promise<any[]> {
+    const techKeywords = {
+      en: [
+        'robot floor cleaner',
+        'air purifier',
+        'dryer',
+        'smart washing machine',
+        'smart home',
+      ],
+      vi: [
+        'robot lau nhà',
+        'máy lọc không khí',
+        'máy sấy quần áo',
+        'máy giặt thông minh',
+        'nhà thông minh',
+      ],
+    };
+
+    const keywords = techKeywords[locale];
+
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'image')
+      .leftJoinAndSelect('product.category', 'category')
+      .where('product.isActive = :isActive', { isActive: true });
+
+    // Search for category name or product name
+    if (keywords.length > 0) {
+      query.andWhere(
+        new Brackets((qb) => {
+          keywords.forEach((keyword, index) => {
+            const categoryParamKey = `categoryKeyword${index}`;
+            const productParamKey = `productKeyword${index}`;
+
+            if (index === 0) {
+              qb.where(
+                `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+                {
+                  locale,
+                  [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+                  [productParamKey]: `%${keyword.toLowerCase()}%`,
+                },
+              );
+            } else {
+              qb.orWhere(
+                `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+                {
+                  locale,
+                  [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+                  [productParamKey]: `%${keyword.toLowerCase()}%`,
+                },
+              );
+            }
+          });
+        }),
+      );
+    }
+
+    query.orderBy('product.createdAt', 'DESC').take(4);
+    const rawProducts = await query.getMany();
+
+    return rawProducts.map((product) =>
+      this.filterProductByLocale(product, locale),
+    );
   }
 
   private filterProductByLocale(product: Product, locale: string) {
