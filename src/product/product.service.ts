@@ -216,6 +216,79 @@ export class ProductService {
     return await query.getMany();
   }
 
+  // //Function get Kitchen Products
+  // async getKitchenProducts(locale: 'vi' | 'en' = 'vi'): Promise<any[]> {
+  //   const kitchenKeywords = {
+  //     en: [
+  //       'induction cooker',
+  //       'range hood',
+  //       'dishwasher',
+  //       'griller',
+  //       'refrigerator',
+  //       'coffee machine',
+  //       'kitchen faucet',
+  //       'kitchen sink',
+  //     ],
+  //     vi: [
+  //       'bếp từ',
+  //       'máy hút mùi',
+  //       'máy rửa bát',
+  //       'lò nướng',
+  //       'tủ lạnh',
+  //       'máy pha cà phê',
+  //       'vòi bếp',
+  //       'chậu rửa bếp',
+  //     ],
+  //   };
+
+  //   const keywords = kitchenKeywords[locale];
+
+  //   const query = this.productRepository
+  //     .createQueryBuilder('product')
+  //     .leftJoinAndSelect('product.images', 'image')
+  //     .leftJoinAndSelect('product.category', 'category')
+  //     .where('product.isActive = :isActive', { isActive: true });
+
+  //   // Search for category name or product name
+  //   if (keywords.length > 0) {
+  //     query.andWhere(
+  //       new Brackets((qb) => {
+  //         keywords.forEach((keyword, index) => {
+  //           const categoryParamKey = `categoryKeyword${index}`;
+  //           const productParamKey = `productKeyword${index}`;
+
+  //           if (index === 0) {
+  //             qb.where(
+  //               `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+  //               {
+  //                 locale,
+  //                 [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+  //                 [productParamKey]: `%${keyword.toLowerCase()}%`,
+  //               },
+  //             );
+  //           } else {
+  //             qb.orWhere(
+  //               `(LOWER(category.name ->> :locale) LIKE :${categoryParamKey} OR LOWER(product.name ->> :locale) LIKE :${productParamKey})`,
+  //               {
+  //                 locale,
+  //                 [categoryParamKey]: `%${keyword.toLowerCase()}%`,
+  //                 [productParamKey]: `%${keyword.toLowerCase()}%`,
+  //               },
+  //             );
+  //           }
+  //         });
+  //       }),
+  //     );
+  //   }
+
+  //   query.orderBy('product.createdAt', 'DESC').take(4);
+  //   const rawProducts = await query.getMany();
+
+  //   return rawProducts.map((product) =>
+  //     this.filterProductByLocale(product, locale),
+  //   );
+  // }
+
   //Function get Kitchen Products
   async getKitchenProducts(locale: 'vi' | 'en' = 'vi'): Promise<any[]> {
     const kitchenKeywords = {
@@ -243,6 +316,7 @@ export class ProductService {
 
     const keywords = kitchenKeywords[locale];
 
+    // Get all matching products first
     const query = this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'image')
@@ -281,10 +355,68 @@ export class ProductService {
       );
     }
 
-    query.orderBy('product.createdAt', 'DESC').take(4);
-    const rawProducts = await query.getMany();
+    query.orderBy('product.createdAt', 'DESC');
+    const allProducts = await query.getMany();
 
-    return rawProducts.map((product) =>
+    // Filter to get diverse products (max 1 per category, prioritize different types)
+    const selectedProducts: Product[] = [];
+    const usedCategories = new Set<number>();
+    const priorityKeywords = [
+      'kitchen sink',
+      'kitchen faucet',
+      'chậu rửa bếp',
+      'vòi bếp',
+    ];
+
+    // First pass: prioritize kitchen sink and kitchen faucet
+    for (const product of allProducts) {
+      if (selectedProducts.length >= 4) break;
+
+      const categoryName =
+        product.category?.name?.[locale]?.toLowerCase() || '';
+      const productName = product.name?.[locale]?.toLowerCase() || '';
+
+      // Check if this product matches priority keywords
+      const matchesPriority = priorityKeywords.some(
+        (keyword) =>
+          categoryName.includes(keyword.toLowerCase()) ||
+          productName.includes(keyword.toLowerCase()),
+      );
+
+      if (matchesPriority && !usedCategories.has(product.category?.id)) {
+        selectedProducts.push(product);
+        usedCategories.add(product.category?.id);
+      }
+    }
+
+    // Second pass: fill remaining slots with other diverse products
+    for (const product of allProducts) {
+      if (selectedProducts.length >= 4) break;
+
+      // Skip if already selected or category already used
+      if (
+        selectedProducts.includes(product) ||
+        usedCategories.has(product.category?.id)
+      ) {
+        continue;
+      }
+
+      selectedProducts.push(product);
+      usedCategories.add(product.category?.id);
+    }
+
+    // If still need more products and have exhausted unique categories, fill with remaining
+    if (selectedProducts.length < 4) {
+      for (const product of allProducts) {
+        if (selectedProducts.length >= 4) break;
+
+        if (!selectedProducts.includes(product)) {
+          selectedProducts.push(product);
+        }
+      }
+    }
+
+    return selectedProducts.map((product) =>
       this.filterProductByLocale(product, locale),
     );
   }
