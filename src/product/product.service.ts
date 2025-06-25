@@ -106,9 +106,15 @@ export class ProductService {
       relations: ['category', 'images'],
     });
 
+    if (!updatedProduct) {
+      throw new NotFoundException(`Not found`);
+    }
+
+    updatedProduct.images.sort((a, b) => a.id - b.id);
+
     return {
       message: 'Product fetched successfully',
-      data: this.filterProductByLocale(updatedProduct as Product, locale),
+      data: this.filterProductByLocale(updatedProduct, locale),
     };
   }
 
@@ -285,6 +291,7 @@ export class ProductService {
     }
 
     query.orderBy('product.createdAt', 'DESC');
+    query.addOrderBy('image.id', 'ASC');
     const allProducts = await query.getMany();
 
     // Filter to get diverse products (max 1 per category, prioritize different types)
@@ -410,6 +417,7 @@ export class ProductService {
     }
 
     query.orderBy('product.createdAt', 'DESC').take(4);
+    query.addOrderBy('image.id', 'ASC');
     const rawProducts = await query.getMany();
 
     return rawProducts.map((product) =>
