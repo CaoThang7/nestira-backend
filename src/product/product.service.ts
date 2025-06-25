@@ -290,8 +290,15 @@ export class ProductService {
       );
     }
 
-    query.orderBy('product.createdAt', 'DESC').addOrderBy('image.id', 'ASC');
+    query.orderBy('product.createdAt', 'DESC');
     const allProducts = await query.getMany();
+
+    // ✅ Sort images by image.id ASC in each product
+    for (const product of allProducts) {
+      if (product.images) {
+        product.images.sort((a, b) => a.id - b.id);
+      }
+    }
 
     // Filter to get diverse products (max 1 per category, prioritize different types)
     const selectedProducts: Product[] = [];
@@ -415,11 +422,15 @@ export class ProductService {
       );
     }
 
-    query
-      .orderBy('product.createdAt', 'DESC')
-      .addOrderBy('image.id', 'ASC')
-      .take(4);
+    query.orderBy('product.createdAt', 'DESC').take(4);
     const rawProducts = await query.getMany();
+
+    // ✅ Sort images in each product by image.id ASC
+    for (const product of rawProducts) {
+      if (product.images) {
+        product.images.sort((a, b) => a.id - b.id);
+      }
+    }
 
     return rawProducts.map((product) =>
       this.filterProductByLocale(product, locale),
