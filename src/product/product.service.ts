@@ -290,8 +290,7 @@ export class ProductService {
       );
     }
 
-    query.orderBy('product.createdAt', 'DESC');
-    query.addOrderBy('image.id', 'ASC');
+    query.orderBy('product.createdAt', 'DESC').addOrderBy('image.id', 'ASC');
     const allProducts = await query.getMany();
 
     // Filter to get diverse products (max 1 per category, prioritize different types)
@@ -416,8 +415,10 @@ export class ProductService {
       );
     }
 
-    query.orderBy('product.createdAt', 'DESC').take(4);
-    query.addOrderBy('image.id', 'ASC');
+    query
+      .orderBy('product.createdAt', 'DESC')
+      .addOrderBy('image.id', 'ASC')
+      .take(4);
     const rawProducts = await query.getMany();
 
     return rawProducts.map((product) =>
