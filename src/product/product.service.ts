@@ -209,6 +209,8 @@ export class ProductService {
         break;
     }
 
+    query.addOrderBy('image.id', 'ASC');
+
     const rawProducts = await query.getMany();
 
     return rawProducts.map((product) =>
