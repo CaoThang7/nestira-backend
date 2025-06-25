@@ -182,10 +182,12 @@ export class ProductService {
   }
 
   async getFilteredProducts({
+    locale = 'en',
     sort = 'price_asc',
     page = 1,
     limit = 20,
   }: {
+    locale: string;
     sort: string;
     page: number;
     limit: number;
@@ -213,7 +215,11 @@ export class ProductService {
 
     query.skip((page - 1) * limit).take(limit);
 
-    return await query.getMany();
+    const rawProducts = await query.getMany();
+
+    return rawProducts.map((product) =>
+      this.filterProductByLocale(product, locale),
+    );
   }
 
   //Function get Kitchen Products
