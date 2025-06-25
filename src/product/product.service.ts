@@ -184,13 +184,9 @@ export class ProductService {
   async getFilteredProducts({
     locale = 'en',
     sort = 'price_asc',
-    page = 1,
-    limit = 20,
   }: {
     locale: string;
     sort: string;
-    page: number;
-    limit: number;
   }) {
     const query = this.productRepository
       .createQueryBuilder('product')
@@ -212,8 +208,6 @@ export class ProductService {
         query.orderBy('product.createdAt', 'DESC');
         break;
     }
-
-    query.skip((page - 1) * limit).take(limit);
 
     const rawProducts = await query.getMany();
 

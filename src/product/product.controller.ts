@@ -43,15 +43,8 @@ export class ProductController {
   async getProducts(
     @Locale() locale: string,
     @Query('sort') sort: 'price_asc' | 'price_desc' | 'views_desc',
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
   ): Promise<any[]> {
-    return this.productService.getFilteredProducts({
-      locale,
-      sort,
-      page,
-      limit,
-    });
+    return this.productService.getFilteredProducts({ locale, sort });
   }
 
   @Get('kitchen-products')
