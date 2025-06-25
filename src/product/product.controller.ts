@@ -9,7 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
-import { Product } from './product.entity';
 import { ProductService } from './product.service';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -42,11 +41,17 @@ export class ProductController {
 
   @Get('list-sort')
   async getProducts(
+    @Locale() locale: string,
     @Query('sort') sort: 'price_asc' | 'price_desc' | 'views_desc',
     @Query('page') page = 1,
     @Query('limit') limit = 20,
-  ): Promise<Product[]> {
-    return this.productService.getFilteredProducts({ sort, page, limit });
+  ): Promise<any[]> {
+    return this.productService.getFilteredProducts({
+      locale,
+      sort,
+      page,
+      limit,
+    });
   }
 
   @Get('kitchen-products')
