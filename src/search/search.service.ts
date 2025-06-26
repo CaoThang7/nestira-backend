@@ -114,6 +114,7 @@ export class SearchService {
 
     // Order by relevance (can customize)
     queryBuilder.orderBy('product.createdAt', 'DESC');
+    queryBuilder.addOrderBy('images.id', 'ASC');
 
     const [products, total] = await queryBuilder.getManyAndCount();
 
@@ -159,6 +160,7 @@ export class SearchService {
     queryBuilder.skip(offset).take(limit);
 
     queryBuilder.orderBy('product.createdAt', 'DESC');
+    queryBuilder.addOrderBy('images.id', 'ASC');
 
     const [products, total] = await queryBuilder.getManyAndCount();
 
