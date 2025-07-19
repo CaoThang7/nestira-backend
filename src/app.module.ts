@@ -13,9 +13,11 @@ import { EmailModule } from './email/email.module';
 import { OrderItem } from './order/order-item.entity';
 import { SearchModule } from './search/search.module';
 import { Category } from './category/category.entity';
+import { Promotion } from './promotion/promotion.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
+import { PromotionModule } from './promotion/promotion.module';
 import { StatisticalModule } from './statistical/statistical.module';
 
 @Module({
@@ -30,7 +32,15 @@ import { StatisticalModule } from './statistical/statistical.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Product, ProductImage, Category, User, Order, OrderItem],
+      entities: [
+        Product,
+        ProductImage,
+        Category,
+        User,
+        Order,
+        OrderItem,
+        Promotion,
+      ],
       synchronize: true,
     }),
     ProductModule,
@@ -41,6 +51,7 @@ import { StatisticalModule } from './statistical/statistical.module';
     OrderModule,
     EmailModule,
     StatisticalModule,
+    PromotionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
