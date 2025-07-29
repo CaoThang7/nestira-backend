@@ -7,24 +7,21 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Promotion {
+export class Newsletters {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('jsonb')
-  title: {
-    vi: string;
-    en: string;
-  };
-
-  @Column('jsonb', { nullable: true })
-  content?: {
-    vi?: string;
-    en?: string;
-  };
+  @Column({ nullable: true })
+  fullName?: string;
 
   @Column({ nullable: true })
-  thumbnail?: string;
+  email?: string;
+
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ nullable: true })
+  content?: string;
 
   @CreateDateColumn()
   createdAt: Date;

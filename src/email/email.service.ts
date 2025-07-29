@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Order } from '../order/order.entity';
+import { ConfigService } from '@nestjs/config';
+import { Newsletters } from 'src/newsletters/newsletters.entity';
+import { Promotion } from 'src/promotion/promotion.entity';
 
 // Interface for mail options
 interface MailOptions {
@@ -24,6 +26,10 @@ interface TransporterConfig {
 
 // Type definitions for template functions
 type TemplateFunction = (order: Order, ...args: any[]) => string;
+type TemplateNewslettersFunction = (
+  newsletters: Newsletters,
+  ...args: any[]
+) => string;
 
 interface EmailTemplateModule {
   orderConfirmationTemplate?: TemplateFunction;
@@ -32,6 +38,7 @@ interface EmailTemplateModule {
   orderShippingTemplate?: (order: Order, trackingNumber?: string) => string;
   orderDeliveredTemplate?: TemplateFunction;
   orderCancelledTemplate?: (order: Order, reason?: string) => string;
+  newslettersTemplate?: TemplateNewslettersFunction;
 }
 
 @Injectable()
@@ -133,6 +140,25 @@ export class EmailService {
     return this.sendEmail(mailOptions);
   }
 
+  // Send newsletters email to customer
+  async sendNewsletters(
+    subscriber: Newsletters,
+    promotion: Promotion,
+    locale: string,
+  ): Promise<void> {
+    const mailOptions: MailOptions = {
+      from: `Nestira <${this.configService.get<string>('SMTP_FROM') || ''}>`,
+      to: subscriber.email!,
+      subject:
+        locale === 'vi'
+          ? `[Nestira] Tin khuyến mãi mới`
+          : `[Nestira] New Promotion`,
+      html: await this.getNewslettersTemplate(subscriber, promotion, locale),
+    };
+
+    return this.sendEmail(mailOptions);
+  }
+
   // Common method to send email
   private async sendEmail(mailOptions: MailOptions): Promise<void> {
     try {
@@ -222,5 +248,21 @@ export class EmailService {
     }
 
     return EmailTemplates.orderCancelledTemplate(order, reason);
+  }
+
+  private async getNewslettersTemplate(
+    subscriber: Newsletters,
+    promotion: Promotion,
+    locale: string,
+  ): Promise<string> {
+    const EmailTemplates = (await import(
+      './templates/newsletters.template'
+    )) as EmailTemplateModule;
+
+    if (!EmailTemplates.newslettersTemplate) {
+      throw new Error('newslettersTemplate not found in module');
+    }
+
+    return EmailTemplates.newslettersTemplate(subscriber, promotion, locale);
   }
 }
