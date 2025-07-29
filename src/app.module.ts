@@ -18,7 +18,9 @@ import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { ProductImage } from './product/product-image.entity';
 import { PromotionModule } from './promotion/promotion.module';
+import { Newsletters } from './newsletters/newsletters.entity';
 import { StatisticalModule } from './statistical/statistical.module';
+import { NewslettersModule } from './newsletters/newsletters.module';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { StatisticalModule } from './statistical/statistical.module';
         Order,
         OrderItem,
         Promotion,
+        Newsletters,
       ],
       synchronize: true,
     }),
@@ -52,6 +55,7 @@ import { StatisticalModule } from './statistical/statistical.module';
     EmailModule,
     StatisticalModule,
     PromotionModule,
+    NewslettersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
